@@ -34,6 +34,15 @@ function loadDataAndAdd(periodValue) {
     if (!productLinks.length) return;
 
     const productCodes = [...new Set(productLinks.map(link => link.href.split('/').pop()))];
+
+    const pendingHtmlContent = `
+            <div class="spinner-border spinner-border-sm text-primary m-2" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+    `
+    productCodes.forEach(productCode => {
+        showOnThumbnal(productCode, pendingHtmlContent)
+    })
     const viewitemParams = {
         groupby_fields: 'product__code',
         count_fields: 'id',
@@ -49,25 +58,22 @@ function loadDataAndAdd(periodValue) {
     }
     chrome.runtime.sendMessage({
         type: 'requestAdminApi',
-        apiUrls: [
-            `/adminapi/v1/customerevent/annotate/?${Object.keys(viewitemParams).map(key => `${key}=${viewitemParams[key]}`).join('&')}`,
-            `/adminapi/v1/orderitem/annotate/?${Object.keys(orderitemParams).map(key => `${key}=${orderitemParams[key]}`).join('&')}`,
-        ]
+        apiUrls: [`/adminapi/v1/customerevent/annotate/?${Object.keys(viewitemParams).map(key => `${key}=${viewitemParams[key]}`).join('&')}`, `/adminapi/v1/orderitem/annotate/?${Object.keys(orderitemParams).map(key => `${key}=${orderitemParams[key]}`).join('&')}`,]
     });
 }
 
 function getVisibleElements(selector) {
-  const elements = document.querySelectorAll(selector);
-  const visibleElements = [];
+    const elements = document.querySelectorAll(selector);
+    const visibleElements = [];
 
-  elements.forEach(el => {
-    const rect = el.getBoundingClientRect();
-    if (rect.top >= 0 && rect.bottom <= window.innerHeight) {
-      visibleElements.push(el);
-    }
-  });
+    elements.forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top >= 0 && rect.bottom <= window.innerHeight) {
+            visibleElements.push(el);
+        }
+    });
 
-  return visibleElements;
+    return visibleElements;
 }
 
 document.querySelector('#hazel-period').addEventListener('change', function (event) {
@@ -82,7 +88,6 @@ window.addEventListener('scroll', () => {
         loadDataAndAdd(periodValue);
     }, 300); // 300ms 디바운스
 });
-
 
 
 chrome.runtime.onMessage.addListener(function (event, sender, sendResponse) {
@@ -102,13 +107,8 @@ chrome.runtime.onMessage.addListener(function (event, sender, sendResponse) {
             }
         })
         Object.keys(dataMap).forEach(productCode => {
-            const aElement = document.querySelector(`a[href="/product/${productCode}"]`)
-            if (!aElement) {
-                return
-            }
-            const parentElement = aElement.parentElement
+
             const htmlContent = `
-                    <div style="position: absolute;right:0;top:0;opacity: 0.8;font-size:80%" class="hazel-info">
                         <table class="table table-sm table-borderless m-0">
                           <tbody>
                             <tr>
@@ -125,9 +125,21 @@ chrome.runtime.onMessage.addListener(function (event, sender, sendResponse) {
                             </tr>
                           </tbody>
                         </table>
-                    </div>
             `
-            parentElement.insertAdjacentHTML('beforeend', htmlContent)
+            showOnThumbnal(productCode, htmlContent)
         })
     }
 })
+
+function showOnThumbnal(productCode, htmlContent) {
+    const aElement = document.querySelector(`a[href="/product/${productCode}"]`)
+    if (!aElement) {
+        return
+    }
+    const parentElement = aElement.parentElement
+    if (parentElement.querySelector('.hazel-info')) {
+        parentElement.querySelector('.hazel-info').innerHTML = htmlContent
+    } else {
+        parentElement.insertAdjacentHTML('beforeend', `<div style="position: absolute;right:0;top:0;opacity: 0.8;font-size:80%" class="hazel-info">${htmlContent}</div>`)
+    }
+}
