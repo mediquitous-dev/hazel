@@ -36,7 +36,7 @@ function loadDataAndAdd(periodValue) {
     const productCodes = [...new Set(productLinks.map(link => link.href.split('/').pop()))];
 
     const pendingHtmlContent = `
-            <div class="spinner-border spinner-border-sm text-primary m-2" role="status">
+            <div class="spinner-border spinner-border-sm text-primary m-2 hazel-spinner" role="status">
               <span class="visually-hidden">Loading...</span>
             </div>
     `
@@ -106,8 +106,8 @@ chrome.runtime.onMessage.addListener(function (event, sender, sendResponse) {
                 orderCount: item.id__count, ...dataMap[item.product_variant__product__code]
             }
         })
+        document.querySelectorAll('.hazel-spinner').forEach(spinner => spinner.remove())
         Object.keys(dataMap).forEach(productCode => {
-
             const htmlContent = `
                         <table class="table table-sm table-borderless m-0">
                           <tbody>
