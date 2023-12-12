@@ -1,7 +1,7 @@
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.type === 'requestAdminApi') {
-        fetch(request.apiUrl)
-            .then(response => response.json())
+        Promise.all(request.apiUrls.map(apiUrl => fetch(apiUrl)))
+            .then(responses => Promise.all(responses.map(response => response.json())))
             .then(data => {
                 chrome.runtime.sendMessage({type: 'responseAdminApi', data});
             })
