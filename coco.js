@@ -132,8 +132,11 @@ chrome.runtime.onMessage.addListener(function (event, sender, sendResponse) {
 })
 
 function showOnThumbnal(productCode, htmlContent) {
-    const aElements = document.querySelectorAll(`a[href="/product/${productCode}"]`)
+    const aElements = document.querySelectorAll(`a[href="/product/${productCode}"].text-black`)
     aElements.forEach(aElement => {
+        console.log(productCode)
+        console.log(aElement)
+        console.log(aElement.parentElement)
         const parentElement = aElement.parentElement
         if (parentElement.querySelector('.hazel-info')) {
             parentElement.querySelector('.hazel-info').innerHTML = htmlContent
