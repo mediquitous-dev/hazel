@@ -132,14 +132,13 @@ chrome.runtime.onMessage.addListener(function (event, sender, sendResponse) {
 })
 
 function showOnThumbnal(productCode, htmlContent) {
-    const aElement = document.querySelector(`a[href="/product/${productCode}"]`)
-    if (!aElement) {
-        return
-    }
-    const parentElement = aElement.parentElement
-    if (parentElement.querySelector('.hazel-info')) {
-        parentElement.querySelector('.hazel-info').innerHTML = htmlContent
-    } else {
-        parentElement.insertAdjacentHTML('beforeend', `<div style="position: absolute;right:0;top:0;opacity: 0.8;font-size:80%" class="hazel-info">${htmlContent}</div>`)
-    }
+    const aElements = document.querySelectorAll(`a[href="/product/${productCode}"]`)
+    aElements.forEach(aElement => {
+        const parentElement = aElement.parentElement
+        if (parentElement.querySelector('.hazel-info')) {
+            parentElement.querySelector('.hazel-info').innerHTML = htmlContent
+        } else {
+            parentElement.insertAdjacentHTML('beforeend', `<div style="position: absolute;right:0;top:0;opacity: 0.8;font-size:80%" class="hazel-info">${htmlContent}</div>`)
+        }
+    })
 }
