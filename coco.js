@@ -8,6 +8,7 @@ const periods = [
     { label: '최근 6시간', time: 6, unit: 'hour' },
     { label: '최근 12시간', time: 12, unit: 'hour' },
     { label: '오늘', time: 0, unit: 'day' },
+    { label: '최근3일', time: 3, unit: 'day' },
     { label: '최근7일', time: 7, unit: 'day' },
     { label: '최근30일', time: 30, unit: 'day' }
 ]
