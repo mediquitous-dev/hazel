@@ -1,4 +1,5 @@
 let pending = false
+let hazelFontSize = 10
 
 const periods = [
     { label: '최근 30분', time: 10, unit: 'minute' },
@@ -20,6 +21,9 @@ document.body.insertAdjacentHTML(
         <option value="">보지않음</option>
         ${periods.map((period) => `<option value="${period.label}">${period.label}</option>`).join("")}
     </select>
+    <button style="font-size:12px;width:20px;height:20px;border:1px solid #d1d5db;border-radius:4px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center" id="hazel-font-minus">−</button>
+    <span style="font-size:11px;color:#fff;min-width:20px;text-align:center" id="hazel-font-size">${hazelFontSize}</span>
+    <button style="font-size:12px;width:20px;height:20px;border:1px solid #d1d5db;border-radius:4px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center" id="hazel-font-plus">+</button>
 </div>
 `,
 );
@@ -87,6 +91,17 @@ document.querySelector('#hazel-period').addEventListener('change', function (eve
     loadDataAndAdd(event.target.value);
 })
 
+function updateHazelFontSize(delta) {
+    hazelFontSize = Math.max(6, Math.min(20, hazelFontSize + delta));
+    document.querySelector('#hazel-font-size').textContent = hazelFontSize;
+    document.querySelectorAll('.hazel-info table').forEach(table => {
+        table.style.fontSize = hazelFontSize + 'px';
+    });
+}
+
+document.querySelector('#hazel-font-minus').addEventListener('click', () => updateHazelFontSize(-1));
+document.querySelector('#hazel-font-plus').addEventListener('click', () => updateHazelFontSize(1));
+
 let timeout;
 window.addEventListener('scroll', () => {
     clearTimeout(timeout);
@@ -116,7 +131,7 @@ chrome.runtime.onMessage.addListener(function (event, sender, sendResponse) {
         document.querySelectorAll('.hazel-spinner').forEach(spinner => spinner.remove())
         Object.keys(dataMap).forEach(productCode => {
             const htmlContent = `
-                        <table style="margin:0;font-size:10px;border-collapse:collapse;background:rgba(255,255,255,0.85);padding:2px 8px">
+                        <table style="margin:0;font-size:${hazelFontSize}px;border-collapse:collapse;background:rgba(255,255,255,0.85);padding:2px 8px">
                           <tbody>
                             <tr>
                               <td style="padding:1px 4px 1px 0">조회</td>
