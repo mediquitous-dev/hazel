@@ -5,6 +5,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             .then(data => {
                 chrome.runtime.sendMessage({type: 'responseAdminApi', data});
             })
-            .catch(error => reject(error));
+            .catch(error => console.error('[hazel:noah]', error));
     }
 })

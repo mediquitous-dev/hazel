@@ -11,15 +11,18 @@ const periods = [
     { label: '최근30일', time: 30, unit: 'day' }
 ]
 
-document.querySelector('.navbar-nav').insertAdjacentHTML('beforeend', `
-<div class="input-group">
-    <span class="input-group-text">상품스탯</span>
-    <select class="form-select" id="hazel-period" aria-label="Example select with button addon">
+document.body.insertAdjacentHTML(
+    "beforeend",
+    `
+<div style="position:fixed;top:8px;right:8px;z-index:99999;display:flex;align-items:center;gap:4px;background:#fff;border:1px solid #d1d5db;border-radius:6px;padding:4px 8px;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
+    <span style="font-size:12px;font-weight:500;white-space:nowrap">상품스탯</span>
+    <select style="font-size:12px;border:1px solid #d1d5db;border-radius:4px;padding:2px 4px;background:#fff" id="hazel-period">
         <option value="">보지않음</option>
-        ${periods.map(period => `<option value="${period.label}">${period.label}</option>`).join('')}
+        ${periods.map((period) => `<option value="${period.label}">${period.label}</option>`).join("")}
     </select>
 </div>
-`)
+`,
+);
 
 function loadDataAndAdd(periodValue) {
     if (!periodValue) return;
@@ -36,10 +39,9 @@ function loadDataAndAdd(periodValue) {
     const productCodes = [...new Set(productLinks.map(link => link.href.split('/').pop()))];
 
     const pendingHtmlContent = `
-            <div class="spinner-border spinner-border-sm text-primary m-2 hazel-spinner" role="status">
-              <span class="visually-hidden">Loading...</span>
-            </div>
-    `
+            <div class="hazel-spinner" style="margin:8px;display:inline-block;width:16px;height:16px;border:2px solid #3b82f6;border-right-color:transparent;border-radius:50%;animation:hazel-spin 0.75s linear infinite" role="status"></div>
+            <style>@keyframes hazel-spin{to{transform:rotate(360deg)}}</style>
+    `;
     productCodes.forEach(productCode => {
         showOnThumbnal(productCode, pendingHtmlContent)
     })
@@ -56,10 +58,15 @@ function loadDataAndAdd(periodValue) {
         ordered__gte: periodStart,
         product_variant__product__code__in: productCodes.join(',')
     }
-    chrome.runtime.sendMessage({
-        type: 'requestAdminApi',
-        apiUrls: [`/adminapi/v1/customerevent/annotate/?${Object.keys(viewitemParams).map(key => `${key}=${viewitemParams[key]}`).join('&')}`, `/adminapi/v1/orderitem/annotate/?${Object.keys(orderitemParams).map(key => `${key}=${orderitemParams[key]}`).join('&')}`,]
-    });
+    const apiUrls = [
+        `/adminapi/v1/customerevent/annotate/?${Object.keys(viewitemParams)
+            .map((key) => `${key}=${viewitemParams[key]}`)
+            .join("&")}`,
+        `/adminapi/v1/orderitem/annotate/?${Object.keys(orderitemParams)
+            .map((key) => `${key}=${orderitemParams[key]}`)
+            .join("&")}`,
+    ];
+    chrome.runtime.sendMessage({ type: "requestAdminApi", apiUrls });
 }
 
 function getVisibleElements(selector) {
@@ -109,23 +116,23 @@ chrome.runtime.onMessage.addListener(function (event, sender, sendResponse) {
         document.querySelectorAll('.hazel-spinner').forEach(spinner => spinner.remove())
         Object.keys(dataMap).forEach(productCode => {
             const htmlContent = `
-                        <table class="table table-sm table-borderless m-0">
+                        <table style="margin:0;font-size:12px;border-collapse:collapse">
                           <tbody>
                             <tr>
-                              <td class="py-0">조회</td>
-                              <td class="text-end py-0">${dataMap[productCode].viewCount ?? '-'}</td>
+                              <td style="padding:0 4px 0 0">조회</td>
+                              <td style="padding:0;text-align:right">${dataMap[productCode].viewCount ?? "-"}</td>
                             </tr>
                             <tr>
-                              <td class="py-0">구매</td>
-                              <td class="text-end py-0">${dataMap[productCode].orderCount ?? '-'}</td>
+                              <td style="padding:0 4px 0 0">구매</td>
+                              <td style="padding:0;text-align:right">${dataMap[productCode].orderCount ?? "-"}</td>
                             </tr>
                             <tr>
-                              <td class="py-0">CVR</td>
-                              <td class="text-end py-0">${(dataMap[productCode].orderCount && dataMap[productCode].viewCount) ? (dataMap[productCode].orderCount / dataMap[productCode].viewCount * 100).toFixed(2) : '-'}</td>
+                              <td style="padding:0 4px 0 0">CVR</td>
+                              <td style="padding:0;text-align:right">${dataMap[productCode].orderCount && dataMap[productCode].viewCount ? ((dataMap[productCode].orderCount / dataMap[productCode].viewCount) * 100).toFixed(2) : "-"}</td>
                             </tr>
                           </tbody>
                         </table>
-            `
+            `;
             showOnThumbnal(productCode, htmlContent)
         })
     }
@@ -134,14 +141,17 @@ chrome.runtime.onMessage.addListener(function (event, sender, sendResponse) {
 function showOnThumbnal(productCode, htmlContent) {
     const aElements = document.querySelectorAll(`a[href="/product/${productCode}"].text-black`)
     aElements.forEach(aElement => {
-        console.log(productCode)
-        console.log(aElement)
-        console.log(aElement.parentElement)
-        const parentElement = aElement.parentElement
-        if (parentElement.querySelector('.hazel-info')) {
-            parentElement.querySelector('.hazel-info').innerHTML = htmlContent
+        // console.log(productCode)
+        // console.log(aElement)
+        // console.log(aElement.parentElement)
+        const parentElement = aElement.parentElement;
+        if (parentElement.querySelector(".hazel-info")) {
+            parentElement.querySelector(".hazel-info").innerHTML = htmlContent;
         } else {
-            parentElement.insertAdjacentHTML('beforeend', `<div style="position: absolute;right:0;top:0;opacity: 0.8;font-size:80%" class="hazel-info">${htmlContent}</div>`)
+            parentElement.insertAdjacentHTML(
+                "beforeend",
+                `<div style="position: absolute;right:0;top:0;opacity: 0.8;font-size:80%" class="hazel-info">${htmlContent}</div>`,
+            );
         }
     })
 }
