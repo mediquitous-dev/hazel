@@ -14,8 +14,8 @@ const periods = [
 document.body.insertAdjacentHTML(
     "beforeend",
     `
-<div style="position:fixed;top:8px;right:8px;z-index:99999;display:flex;align-items:center;gap:4px;background:#fff;border:1px solid #d1d5db;border-radius:6px;padding:4px 8px;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
-    <span style="font-size:12px;font-weight:500;white-space:nowrap">상품스탯</span>
+<div style="position:fixed;top:8px;right:8px;z-index:99999;display:flex;align-items:center;gap:4px;background:#000;border:1px solid #000;border-radius:6px;padding:4px 8px;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
+    <span style="font-size:12px;font-weight:500;white-space:nowrap;color:#fff;margin-right:4px">상품스탯</span>
     <select style="font-size:12px;border:1px solid #d1d5db;border-radius:4px;padding:2px 4px;background:#fff" id="hazel-period">
         <option value="">보지않음</option>
         ${periods.map((period) => `<option value="${period.label}">${period.label}</option>`).join("")}
@@ -116,19 +116,19 @@ chrome.runtime.onMessage.addListener(function (event, sender, sendResponse) {
         document.querySelectorAll('.hazel-spinner').forEach(spinner => spinner.remove())
         Object.keys(dataMap).forEach(productCode => {
             const htmlContent = `
-                        <table style="margin:0;font-size:12px;border-collapse:collapse">
+                        <table style="margin:0;font-size:10px;border-collapse:collapse;background:rgba(255,255,255,0.85);padding:2px 8px">
                           <tbody>
                             <tr>
-                              <td style="padding:0 4px 0 0">조회</td>
-                              <td style="padding:0;text-align:right">${dataMap[productCode].viewCount ?? "-"}</td>
+                              <td style="padding:1px 4px 1px 0">조회</td>
+                              <td style="padding:1px 0;text-align:right">${dataMap[productCode].viewCount ?? "-"}</td>
                             </tr>
                             <tr>
-                              <td style="padding:0 4px 0 0">구매</td>
-                              <td style="padding:0;text-align:right">${dataMap[productCode].orderCount ?? "-"}</td>
+                              <td style="padding:1px 4px 1px 0">구매</td>
+                              <td style="padding:1px 0;text-align:right">${dataMap[productCode].orderCount ?? "-"}</td>
                             </tr>
                             <tr>
-                              <td style="padding:0 4px 0 0">CVR</td>
-                              <td style="padding:0;text-align:right">${dataMap[productCode].orderCount && dataMap[productCode].viewCount ? ((dataMap[productCode].orderCount / dataMap[productCode].viewCount) * 100).toFixed(2) : "-"}</td>
+                              <td style="padding:1px 4px 1px 0">CVR</td>
+                              <td style="padding:1px 0;text-align:right">${dataMap[productCode].orderCount && dataMap[productCode].viewCount ? ((dataMap[productCode].orderCount / dataMap[productCode].viewCount) * 100).toFixed(2) : "-"}</td>
                             </tr>
                           </tbody>
                         </table>
@@ -139,11 +139,8 @@ chrome.runtime.onMessage.addListener(function (event, sender, sendResponse) {
 })
 
 function showOnThumbnal(productCode, htmlContent) {
-    const aElements = document.querySelectorAll(`a[href="/product/${productCode}"].text-black`)
-    aElements.forEach(aElement => {
-        // console.log(productCode)
-        // console.log(aElement)
-        // console.log(aElement.parentElement)
+    const aElements = document.querySelectorAll(`a[href="/product/${productCode}"].text-black.no-underline:has(img)`);
+    aElements.forEach((aElement) => {
         const parentElement = aElement.parentElement;
         if (parentElement.querySelector(".hazel-info")) {
             parentElement.querySelector(".hazel-info").innerHTML = htmlContent;
@@ -153,5 +150,5 @@ function showOnThumbnal(productCode, htmlContent) {
                 `<div style="position: absolute;right:0;top:0;opacity: 0.8;font-size:80%" class="hazel-info">${htmlContent}</div>`,
             );
         }
-    })
+    });
 }
