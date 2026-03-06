@@ -16,15 +16,19 @@ const periods = [
 document.body.insertAdjacentHTML(
     "beforeend",
     `
-<div style="position:fixed;top:8px;right:8px;z-index:99999;display:flex;align-items:center;gap:4px;background:#000;border:1px solid #000;border-radius:6px;padding:4px 8px;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
-    <span style="font-size:12px;font-weight:500;white-space:nowrap;color:#fff;margin-right:4px">상품스탯</span>
-    <select style="font-size:12px;border:1px solid #d1d5db;border-radius:4px;padding:2px 4px;background:#fff" id="hazel-period">
-        <option value="">보지않음</option>
-        ${periods.map((period) => `<option value="${period.label}">${period.label}</option>`).join("")}
-    </select>
-    <button style="font-size:12px;width:20px;height:20px;border:1px solid #d1d5db;border-radius:4px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center" id="hazel-font-minus">−</button>
-    <span style="font-size:11px;color:#fff;min-width:20px;text-align:center" id="hazel-font-size">${hazelFontSize}</span>
-    <button style="font-size:12px;width:20px;height:20px;border:1px solid #d1d5db;border-radius:4px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center" id="hazel-font-plus">+</button>
+<div style="position:fixed;top:8px;right:8px;z-index:99999;display:flex;flex-direction:column;gap:4px;background:#000;border:1px solid #000;border-radius:6px;padding:4px 8px;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
+    <div style="display:flex;align-items:center;gap:4px">
+        <span style="font-size:12px;font-weight:500;white-space:nowrap;color:#fff;margin-right:4px">상품스탯</span>
+        <select style="font-size:12px;border:1px solid #d1d5db;border-radius:4px;padding:2px 4px;background:#fff" id="hazel-period">
+            <option value="">보지않음</option>
+            ${periods.map((period) => `<option value="${period.label}">${period.label}</option>`).join("")}
+        </select>
+    </div>
+    <div style="display:flex;align-items:center;gap:4px;justify-content:center">
+        <button style="font-size:12px;width:20px;height:20px;border:1px solid #d1d5db;border-radius:4px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center" id="hazel-font-minus">−</button>
+        <span style="font-size:11px;color:#fff;min-width:20px;text-align:center" id="hazel-font-size">${hazelFontSize}</span>
+        <button style="font-size:12px;width:20px;height:20px;border:1px solid #d1d5db;border-radius:4px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center" id="hazel-font-plus">+</button>
+    </div>
 </div>
 `,
 );
