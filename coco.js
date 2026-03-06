@@ -147,7 +147,7 @@ function showOnThumbnal(productCode, htmlContent) {
         } else {
             parentElement.insertAdjacentHTML(
                 "beforeend",
-                `<div style="position: absolute;right:0;top:0;opacity: 0.8;font-size:80%" class="hazel-info">${htmlContent}</div>`,
+                `<div style="position: absolute;right:0;top:0;opacity: 0.9;font-size:80%" class="hazel-info">${htmlContent}</div>`,
             );
         }
     });
